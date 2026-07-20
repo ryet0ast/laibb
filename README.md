@@ -1,17 +1,14 @@
-# Search Strategy Assistant Builder
-**Platform-agnostic — works with ChatGPT, Claude, Gemini, Copilot Studio, and Perplexity**
+# LAIBB: Library genAI Bridge Builder
 
 A Streamlit wizard that turns a library's database directory, search syntax
-rules, and research guides into one downloadable package: instructions +
-knowledge files that deploy to any major generative AI platform with only
-minor per-platform steps (paste here, upload there).
-
-**No AI model runs in this app.** It's a templating/packaging tool — no
-Ollama, no server, no GPU, no hosting.
+rules, and research guides into one downloadable package containing instructions +
+knowledge files that can be incorporated to any major generative AI platform with only
+minor per-platform steps (paste here, upload there). Early beta version was coded with 
+assistance from Claude, mostly using Opus 4.8.
 
 ---
 
-## Why "platform-agnostic by default" (Approach B)
+## Why platform-agnostic by default
 
 Rather than generating separate output per platform (ChatGPT vs. Gemini vs.
 Claude), this wizard produces **one canonical content package**. The actual
@@ -156,4 +153,4 @@ inconsistent vocabulary will reduce match quality.
 
 ## Contact
 
-W. Frank Steely Library · [library@nku.edu](mailto:library@nku.edu)
+Ryan Spellman · [spellmanr2@nku.edu](mailto:spellmanr2@nku.edu)
