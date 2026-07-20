@@ -1,0 +1,168 @@
+# Database Syntax Rules — Configuration
+# -----------------------------------------------
+# This file holds SEARCH SYNTAX RULES for a small set of databases you want
+# the AI to build detailed, ready-to-paste Boolean search strings for
+# (e.g. PubMed, CINAHL, Scopus). It is NOT the full database directory —
+# that lives separately in database_directory.md and covers all databases
+# for recommendation/linking purposes.
+#
+# The two files work together:
+#   - database_directory.md  → "which databases fit this topic" + clickable link
+#   - databases.yaml         → "how to build a precise search string" for the
+#                               subset of databases you've documented here
+#
+# No Python knowledge required to edit this file.
+
+# ── Databases ──────────────────────────────────────────────────────────────────
+# Each entry needs: id, name, search_url, and syntax_notes.
+# search_url: a reference link to the database (shown only if this database
+#             isn't already linked in database_directory.md). The AI pastes
+#             the search string it builds for the user to copy — it does not
+#             construct a pre-filled URL.
+# syntax_notes: fed directly into the AI's knowledge — be specific and concrete.
+
+databases:
+
+  - id: pubmed
+    name: "PubMed / MEDLINE"
+    search_url: "https://pubmed.ncbi.nlm.nih.gov/"
+    syntax_notes: |
+      Boolean operators: AND, OR, NOT (must be uppercase)
+      Field tags (append to term in brackets):
+        [MeSH Terms] — controlled vocabulary subject heading
+        [MeSH Major Topic] or [MAJR] — MeSH term as major focus
+        [tiab] — title and abstract free text
+        [ti] — title only
+        [au] — author
+        [pt] — publication type (e.g., "Randomized Controlled Trial"[pt])
+      Truncation: asterisk * (e.g., nurs* matches nurse, nurses, nursing)
+      Phrase searching: "double quotes" (e.g., "cognitive behavioral therapy")
+      Nesting: use parentheses to group OR'd synonyms
+      Example structure:
+        ("breast cancer"[MeSH Terms] OR "breast neoplasm"[tiab] OR "breast tumor"[tiab])
+        AND ("cognitive behavioral therapy"[MeSH Terms] OR "CBT"[tiab])
+        AND ("anxiety"[MeSH Terms] OR anxiety[tiab])
+      Always pair MeSH terms with free-text synonyms using OR for recall.
+      Do not invent MeSH terms — only use well-established MeSH vocabulary.
+
+  - id: cinahl
+    name: "CINAHL (EBSCOhost)"
+    search_url: "https://search.ebscohost.com/"
+    syntax_notes: |
+      Boolean operators: AND, OR, NOT (uppercase)
+      Field codes (append after term with space):
+        TI — title
+        AB — abstract
+        SU — subject heading (CINAHL headings, not MeSH)
+        MH — CINAHL subject heading (exact)
+        TX — all text
+        AU — author
+      Truncation: asterisk * (e.g., nurs*)
+      Wildcard: # (single character), ? (zero or one character)
+      Phrase searching: "double quotes"
+      Proximity: N# (within # words, any order), W# (within # words, in order)
+        e.g., "pain N3 management" — pain within 3 words of management
+      Nesting: parentheses for grouped OR synonyms
+      Example structure:
+        (MH "Diabetes Mellitus") OR (TI diabet* OR AB diabet*)
+        AND (MH "Patient Education") OR (TI "patient education" OR AB "patient teach*")
+      Use CINAHL subject headings (not MeSH) — they differ in important ways.
+
+  - id: psycinfo
+    name: "PsycINFO (EBSCOhost)"
+    search_url: "https://search.ebscohost.com/"
+    syntax_notes: |
+      Boolean operators: AND, OR, NOT (uppercase)
+      Field codes:
+        TI — title
+        AB — abstract
+        SU — subject heading (APA Thesaurus of Psychological Index Terms)
+        DE — descriptor (controlled vocabulary)
+        TX — all text
+        AU — author
+        AG — age group (e.g., AG "Adolescence (13-17 yrs)")
+      Truncation: asterisk *
+      Wildcard: # or ?
+      Phrase: "double quotes"
+      Proximity: N# (near, any order), W# (near, in order)
+      Nesting: parentheses
+      Example structure:
+        (DE "Cognitive Behavior Therapy") OR (TI "cognitive behav*" OR AB "CBT")
+        AND (DE "Anxiety Disorders") OR (TI anxi* OR AB anxi*)
+        AND (DE "College Students") OR (TI "college student*" OR AB "university student*")
+      APA thesaurus terms differ from MeSH and CINAHL — use psychology-specific vocabulary.
+
+  - id: proquest
+    name: "ProQuest (Multi-database)"
+    search_url: "https://www.proquest.com/advanced"
+    syntax_notes: |
+      Boolean operators: AND, OR, NOT (uppercase)
+      Field codes (use as field() syntax):
+        ti() — title
+        ab() — abstract
+        su() — subject/descriptor
+        nref() — number of references
+        peer() — peer reviewed filter
+      Truncation: asterisk * (e.g., therap*)
+      Wildcard: ? (single character)
+      Phrase: "double quotes"
+      Proximity: NEAR/n (within n words, any order), PRE/n (precedes within n words)
+        e.g., ti(mindfulness NEAR/3 intervention)
+      Nesting: parentheses
+      Example structure:
+        (ti("mental health") OR ab("mental health") OR su("mental health"))
+        AND (ti(telehealth OR teletherapy OR "online therapy") OR ab(telehealth OR teletherapy))
+        AND peer(yes)
+      ProQuest searches across multiple databases — recommend broad Boolean with field codes.
+
+  - id: wos
+    name: "Web of Science"
+    search_url: "https://www.webofscience.com/wos/woscc/advanced-search"
+    syntax_notes: |
+      Boolean operators: AND, OR, NOT, NEAR/n (uppercase)
+      Field codes (prefix format, e.g. TS=):
+        TS= — topic (title + abstract + keywords + KeyWords Plus)
+        TI= — title
+        AB= — abstract
+        AU= — author
+        SO= — publication name
+        PY= — publication year (e.g., PY=2018-2024)
+        DT= — document type (e.g., DT=Article)
+      Truncation: asterisk * (e.g., TS=genom*)
+      Wildcard: ? (single character), $ (zero or one character)
+      Phrase: "double quotes"
+      Proximity: NEAR/n (e.g., TS=(pain NEAR/3 management))
+      Nesting: parentheses
+      Example structure:
+        TS=("climate change" OR "global warming" OR "climate crisis")
+        AND TS=(adolescen* OR "young people" OR youth OR teen*)
+        AND TS=(anxiety OR depression OR "mental health")
+        AND PY=2015-2024
+      Web of Science does not use controlled vocabulary — all searching is keyword-based.
+
+  - id: scopus
+    name: "Scopus"
+    search_url: "https://www.scopus.com/search/form.uri#advanced"
+    syntax_notes: |
+      Boolean operators: AND, OR, AND NOT (uppercase)
+      Field codes (prefix format):
+        TITLE-ABS-KEY() — title, abstract, and keywords combined
+        TITLE() — title only
+        ABS() — abstract only
+        KEY() — author keywords
+        AUTH() — author name
+        PUBYEAR > / PUBYEAR < — publication year filters
+        DOCTYPE() — document type (e.g., DOCTYPE(ar) for article)
+        LANGUAGE() — language filter
+      Truncation: asterisk * (e.g., therap*)
+      Wildcard: ? (single character)
+      Phrase: "double quotes"
+      Proximity: W/n (within n words, any order), PRE/n (precedes within n words)
+        e.g., TITLE-ABS-KEY(pain W/3 management)
+      Nesting: parentheses
+      Example structure:
+        TITLE-ABS-KEY("artificial intelligence" OR "machine learning" OR "deep learning")
+        AND TITLE-ABS-KEY("medical diagnosis" OR "clinical decision" OR "healthcare")
+        AND PUBYEAR > 2018
+        AND DOCTYPE(ar)
+      Scopus is citation-indexed — searches are keyword-based, no controlled vocabulary.
