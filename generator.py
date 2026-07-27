@@ -1,6 +1,6 @@
 """
 generator.py — Builds platform-agnostic GPT/Gem/Project packages from
-databases.yaml + database_directory.md + guides.csv
+database_syntax.yaml + database_directory.md + guides.csv
 
 Approach B: one canonical content package (instructions + knowledge files)
 that works across ChatGPT Custom GPTs, Gemini Gems, Claude Projects,
@@ -11,7 +11,7 @@ inference happens here — this is pure templating.
 Three knowledge assets work together:
   - database_directory.md   → full A-Z database list, for recommending and
                                 linking the right database(s) to a topic
-  - databases.yaml          → detailed search syntax rules for the subset of
+  - database_syntax.yaml          → detailed search syntax rules for the subset of
                                 databases the librarian has hand-documented
   - guides.csv              → subject research guides, for recommendations
 
@@ -189,7 +189,7 @@ def build_guides_knowledge_file(guides: list[dict]) -> str:
 def build_database_reference_file(config: dict) -> str:
     """
     Markdown reference of detailed search syntax rules for the subset of
-    databases the librarian has hand-documented in databases.yaml.
+    databases the librarian has hand-documented in database_syntax.yaml.
     """
     lines = [f"# Database Search Syntax Reference", f"_Generated {date.today().isoformat()}_", ""]
     lines.append(
