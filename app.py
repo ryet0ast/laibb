@@ -2,7 +2,7 @@
 app.py — Platform-Agnostic GPT/Gem/Project Builder Wizard
 ------------------------------------------------------------
 Takes:
-  - databases.yaml           (detailed search syntax rules, optional subset)
+  - database_syntax.yaml           (detailed search syntax rules, optional subset)
   - database_directory.md    (full A-Z database list for recommendations + links)
   - guides.csv                (research guides, optional)
 
@@ -242,7 +242,7 @@ st.markdown('<span class="step-badge">STEP 3</span> **Search Syntax Rules** '
             '<span style="color:#888;font-weight:400;font-size:0.85rem;">— optional, for detailed Boolean search strings</span>',
             unsafe_allow_html=True)
 st.caption(
-    "Upload `databases.yaml` for the subset of databases you want detailed, "
+    "Upload `database_syntax.yaml` for the subset of databases you want detailed, "
     "ready-to-paste Boolean search strings for. "
     "Databases not covered here still get recommended from the database directory, "
     "just with plain-language keyword suggestions instead of formal syntax."
@@ -250,19 +250,19 @@ st.caption(
 
 db_source = st.radio(
     "Syntax rules source",
-    ["Upload databases.yaml", "Start from sample template", "Skip — directory only"],
+    ["Upload database_syntax.yaml", "Start from sample template", "Skip — directory only"],
     horizontal=True,
     label_visibility="collapsed",
 )
 
 yaml_text = None
 
-if db_source == "Upload databases.yaml":
-    uploaded = st.file_uploader("Upload databases.yaml", type=["yaml", "yml"])
+if db_source == "Upload database_syntax.yaml":
+    uploaded = st.file_uploader("Upload database_syntax.yaml", type=["yaml", "yml"])
     if uploaded:
         yaml_text = uploaded.read().decode("utf-8")
 elif db_source == "Start from sample template":
-    sample_path = Path(__file__).parent / "databases.yaml"
+    sample_path = Path(__file__).parent / "database_syntax.yaml"
     if sample_path.exists():
         yaml_text = sample_path.read_text()
 

@@ -8,7 +8,7 @@
 #
 # The two files work together:
 #   - database_directory.md  → "which databases fit this topic" + clickable link
-#   - databases.yaml         → "how to build a precise search string" for the
+#   - database_syntax.yaml   → "how to build a precise search string" for the
 #                               subset of databases you've documented here
 #
 # No Python knowledge required to edit this file.
