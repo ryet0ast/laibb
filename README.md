@@ -1,9 +1,10 @@
 # LAIBB: Library genAI Bridge Builder
 
-This is a simple Streamlit wizard that turns a library's database directory, search syntax
-rules, research guides, and help resources into one downloadable package containing instructions +
-knowledge files that can be incorporated to any major generative AI platform with minor per-platform steps. 
-Early beta version was coded with assistance from Claude (Opus 4.8).
+This is a simple Streamlit wizard that simplifies creating instructions and knowledge files to align
+common generative AI tools to academic library resources. By uploading a couple easily exported LibGuide files,
+customizing search syntax rules, and including a link to help resources, this script will generate one downloadable 
+package containing instructions + knowledge files that can be incorporated to any major generative AI platform with 
+minor per-platform steps. Early beta version was coded with assistance from Claude (Opus 4.8).
 
 ---
 
