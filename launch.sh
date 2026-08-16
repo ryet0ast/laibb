@@ -4,9 +4,9 @@
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 echo ""
-echo " ====================================================="
-echo "  Custom GPT Builder — Search Strategy Assistant"
-echo " ====================================================="
+echo " ================================================="
+echo "  LAIBB - Library (Resource) to AI Bridge Builder "
+echo " ================================================="
 echo ""
 
 PORT=8503

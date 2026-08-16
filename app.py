@@ -2,17 +2,16 @@
 app.py — Platform-Agnostic GPT/Gem/Project Builder Wizard
 ------------------------------------------------------------
 Takes:
-  - database_syntax.yaml           (detailed search syntax rules, optional subset)
-  - database_directory.md    (full A-Z database list for recommendations + links)
+  - database_syntax.yaml      (detailed search syntax rules, optional subset)
+  - database_directory.md     (full A-Z database list for recommendations + links)
   - guides.csv                (research guides, optional)
 
-...and generates a downloadable package (Approach B): one set of
+...and generates a downloadable package: one set of
 instructions + knowledge files that work across ChatGPT Custom GPTs,
-Gemini Gems, Claude Projects, and Microsoft Copilot Studio.
+Gemini Gems, Claude Projects, and Microsoft Copilot Studio, and Perplexity 
+Spaces.
 
 No AI inference happens in this app — it's pure templating/packaging.
-
-Run with:  streamlit run app.py
 """
 
 import csv
@@ -26,48 +25,37 @@ from generator import build_package
 from libguides_import import guess_column, build_directory_from_rows
 
 st.set_page_config(
-    page_title="GPT Builder Wizard · Search Strategy Assistant",
-    page_icon="🧩",
+    page_title="LAIBB - Library (Resource) AI Bridge Builder",
     layout="wide",
 )
 
 st.markdown("""
 <style>
-:root { --nku-gold: #F0B323; --nku-black: #1A1A1A; }
-.wiz-header {
-    background: var(--nku-black);
-    color: white;
-    padding: 1rem 1.5rem 0.85rem 1.5rem;
-    border-bottom: 4px solid var(--nku-gold);
-    border-radius: 6px;
-    margin-bottom: 1.5rem;
-}
-.wiz-header h1 { font-size: 1.35rem; margin: 0; }
-.wiz-header p  { font-size: 0.8rem; margin: 0; color: #bbb; text-transform: uppercase; }
+.app-header h1 { font-size: 4rem; margin: 0; }
+.app-header p  { font-size: 1rem; margin: 0; color: #bbb; text-transform: uppercase; }
 .step-badge {
     display: inline-block;
-    background: var(--nku-gold);
-    color: var(--nku-black);
+    background: yellow;
+    color: #000000;
     font-weight: 700;
     border-radius: 20px;
-    padding: 0.1rem 0.7rem;
+    padding: 0.3rem 0.7rem .1rem;
     font-size: 0.8rem;
     margin-right: 0.5rem;
 }
+.stMainBlockContainer {padding-top:1rem} 
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
-<div class="wiz-header">
-    <p>Proof of Concept · Platform-Agnostic</p>
-    <h1>🧩 Search Strategy Assistant Builder</h1>
+<div class="app-header">
+    <h1>LAIBB - Library (Resource) (gen)AI Bridge Builder</h1>
 </div>
 """, unsafe_allow_html=True)
 
 st.caption(
-    "Generates one package — instructions + knowledge files — that works "
-    "across ChatGPT, Claude, Gemini, Copilot Studio, and Perplexity. No local AI model, "
-    "no server, no hosting required."
+    "Generates one package of instructions and knowledge files that helps align mainstream gen AI tools "
+    "such as ChatGPT, Claude, Gemini, Copilot Studio, and Perplexity with library research databases."
 )
 
 if "config" not in st.session_state:
@@ -364,7 +352,7 @@ if not ready:
         missing.append("a database directory and/or syntax rules")
     st.warning(f"Complete these before generating: {', '.join(missing)}")
 
-if st.button("🧩 Generate Package", type="primary", disabled=not ready):
+if st.button("Generate Package", type="primary", disabled=not ready):
     librarian_info = {
         "Appointments": appointments or "(not provided)",
         "General Contact Info": contact_info or "(not provided)",
