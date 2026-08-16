@@ -1,9 +1,9 @@
-# LAIBB: Library genAI Bridge Builder
+# LAIBB: Library (Resource) genAI Bridge Builder
 
 This is a simple Streamlit wizard that simplifies creating instructions and knowledge files to align
 common generative AI tools to academic library resources. By uploading a couple easily exported LibGuide files,
 customizing search syntax rules, and including a link to help resources, this script will generate one downloadable 
-package containing instructions + knowledge files that can be incorporated to any major generative AI platform with 
+package containing instructions and knowledge files that can be incorporated to any major generative AI platform with 
 minor per-platform steps. Early beta version was coded with assistance from Claude (Opus 4.8).
 
 ---
@@ -12,13 +12,13 @@ minor per-platform steps. Early beta version was coded with assistance from Clau
 
 Rather than generating separate output per platform (ChatGPT vs. Gemini vs.
 Claude), this wizard produces one broadly applicable content package. The actual
-substance — how to build a search strategy, which databases to recommend,
-how to format links — doesn't change based on destination. What differs
+substance such as how to build a search strategy, which databases to recommend,
+how to format links doesn't change based on destination. What differs
 between platforms is just where you paste/upload things, which is handled
 by the platform-specific sections in the `SETUP_GUIDE.md`.
 
 To solve character-limit problems that are sometimes encountered when creating 
-custom instructions, database syntax rules live in a knowledge file that the AI too 
+custom instructions, database syntax rules live in a knowledge file that the AI tool 
 is instructed to consult rather than inline with the instructions. 
 
 ---
