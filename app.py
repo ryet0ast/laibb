@@ -284,7 +284,11 @@ st.divider()
 st.markdown('<span class="step-badge">STEP 4</span> **Research Guides** '
             '<span style="color:#888;font-weight:400;font-size:0.85rem;">— optional</span>',
             unsafe_allow_html=True)
-st.caption("Upload an export of PUBLISHED LibGuides (typically a `guides.csv` file), or start from the sample. Columns: title, subject, url, description.")
+st.caption(
+    "Upload a LibGuides guides export (Admin → Guides, any column layout) or a "
+    "custom CSV, or start from the sample. Only a title and a URL are needed — "
+    "map the columns below; Subject/Type and Description are optional."
+)
 
 guides_source = st.radio(
     "Guide source",
@@ -296,15 +300,102 @@ guides_source = st.radio(
 guides_list = []
 
 if guides_source == "Upload guides.csv":
-    uploaded_csv = st.file_uploader("Upload guides.csv", type=["csv"])
+    uploaded_csv = st.file_uploader("Upload guides export (.csv)", type=["csv"])
     if uploaded_csv:
-        text = uploaded_csv.read().decode("utf-8")
-        guides_list = list(csv.DictReader(io.StringIO(text)))
+        text = uploaded_csv.read().decode("utf-8-sig")
+        reader = csv.DictReader(io.StringIO(text))
+        raw_rows = list(reader)
+        raw_columns = reader.fieldnames or []
+
+        st.caption(f"{len(raw_rows)} row(s) found. Confirm which column is which:")
+        gc1, gc2 = st.columns(2)
+        with gc1:
+            g_title_guess = guess_column(raw_columns, "title")
+            g_title_col = st.selectbox(
+                "Title column", raw_columns,
+                index=raw_columns.index(g_title_guess) if g_title_guess in raw_columns else 0,
+                key="guides_title_col",
+            )
+            g_url_guess = guess_column(raw_columns, "url")
+            g_url_col = st.selectbox(
+                "URL column", raw_columns,
+                index=raw_columns.index(g_url_guess) if g_url_guess in raw_columns else 0,
+                key="guides_url_col",
+            )
+        with gc2:
+            g_subject_guess = guess_column(raw_columns, "subjects") or guess_column(raw_columns, "type")
+            g_subject_col = st.selectbox(
+                "Subject/Type column (optional)", ["(none)"] + raw_columns,
+                index=(raw_columns.index(g_subject_guess) + 1) if g_subject_guess in raw_columns else 0,
+                key="guides_subject_col",
+            )
+            g_desc_guess = guess_column(raw_columns, "description")
+            g_desc_col = st.selectbox(
+                "Description column (optional)", ["(none)"] + raw_columns,
+                index=(raw_columns.index(g_desc_guess) + 1) if g_desc_guess in raw_columns else 0,
+                key="guides_desc_col",
+            )
+
+        # LibGuides admin exports usually carry a Status column
+        # (Published/Unpublished/Private) — default to Published-only so
+        # drafts, internal, and test guides don't leak into the assistant's
+        # recommendations, but let the librarian turn it off.
+        g_status_guess = guess_column(raw_columns, "status")
+        published_only = True
+        if g_status_guess:
+            published_only = st.checkbox(
+                f'Only include rows where "{g_status_guess}" is "Published"',
+                value=True,
+                key="guides_published_only",
+                help="Unchecking includes Unpublished/Private guides too — usually "
+                     "not what you want for a public-facing assistant.",
+            )
+
+        skipped_status = 0
+        skipped_missing = 0
+        for row in raw_rows:
+            title = (row.get(g_title_col) or "").strip()
+            url = (row.get(g_url_col) or "").strip()
+            if g_status_guess and published_only and (row.get(g_status_guess) or "").strip().lower() != "published":
+                skipped_status += 1
+                continue
+            if not title or not url:
+                skipped_missing += 1
+                continue
+            guides_list.append({
+                "title": title,
+                "url": url,
+                "subject": (row.get(g_subject_col) or "").strip() if g_subject_col != "(none)" else "",
+                "description": (row.get(g_desc_col) or "").strip() if g_desc_col != "(none)" else "",
+            })
+
+        if skipped_status:
+            st.caption(f"Skipped {skipped_status} non-Published row(s).")
+        if skipped_missing:
+            st.caption(f"Skipped {skipped_missing} row(s) missing a title or URL.")
+
 elif guides_source == "Start from sample template":
     sample_csv_path = Path(__file__).parent / "guides.csv"
     if sample_csv_path.exists():
-        with open(sample_csv_path, newline="", encoding="utf-8") as f:
-            guides_list = list(csv.DictReader(f))
+        with open(sample_csv_path, newline="", encoding="utf-8-sig") as f:
+            sample_reader = csv.DictReader(f)
+            sample_rows = list(sample_reader)
+            sample_columns = sample_reader.fieldnames or []
+        # Map by guessing rather than assuming fixed lowercase headers, since
+        # the sample file's exact column names/order/casing may change.
+        s_title_col = guess_column(sample_columns, "title")
+        s_url_col = guess_column(sample_columns, "url")
+        s_subject_col = guess_column(sample_columns, "subjects") or guess_column(sample_columns, "type")
+        s_desc_col = guess_column(sample_columns, "description")
+        guides_list = [
+            {
+                "title": (row.get(s_title_col) or "").strip() if s_title_col else "",
+                "url": (row.get(s_url_col) or "").strip() if s_url_col else "",
+                "subject": (row.get(s_subject_col) or "").strip() if s_subject_col else "",
+                "description": (row.get(s_desc_col) or "").strip() if s_desc_col else "",
+            }
+            for row in sample_rows
+        ]
 
 if guides_list:
     st.success(f"✅ {len(guides_list)} research guide(s) loaded")

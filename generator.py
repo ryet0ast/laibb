@@ -177,10 +177,16 @@ def build_guides_knowledge_file(guides: list[dict]) -> str:
     lines.append("")
 
     for g in guides:
-        lines.append(f"## {g['title']}")
-        lines.append(f"- **Subjects:** {g['subject']}")
-        lines.append(f"- **URL:** {g['url']}")
-        lines.append(f"- **Description:** {g['description']}")
+        lines.append(f"## {(g.get('title') or 'Untitled guide').strip()}")
+        subject = (g.get("subject") or "").strip()
+        if subject:
+            lines.append(f"- **Subjects:** {subject}")
+        url = (g.get("url") or "").strip()
+        if url:
+            lines.append(f"- **URL:** {url}")
+        description = (g.get("description") or "").strip()
+        if description:
+            lines.append(f"- **Description:** {description}")
         lines.append("")
 
     return "\n".join(lines)

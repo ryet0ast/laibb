@@ -25,6 +25,7 @@ _COLUMN_CANDIDATES = {
     "type":        ["type", "resource type", "types", "content type", "format"],
     "subjects":    ["subject", "subjects", "subject(s)", "subject area", "subject areas"],
     "description": ["description", "desc", "notes", "summary"],
+    "status":      ["status", "publish status", "state"],
 }
 
 
@@ -38,10 +39,12 @@ def guess_column(columns: list[str], field: str) -> str | None:
         if cand in lower_map:
             return lower_map[cand]
 
-    # Substring match as fallback
-    for col in columns:
-        col_lower = col.lower().strip()
-        for cand in candidates:
+    # Substring match as fallback — check candidates in priority order first,
+    # so a strong candidate (e.g. "title") in a later column beats a weak,
+    # generic one (e.g. "name") in an earlier column.
+    for cand in candidates:
+        for col in columns:
+            col_lower = col.lower().strip()
             if cand in col_lower or col_lower in cand:
                 return col
 
